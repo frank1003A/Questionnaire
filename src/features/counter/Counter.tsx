@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react'
+/**import React, { useState } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -66,3 +67,4 @@ export function Counter() {
     </div>
   );
 }
+ */

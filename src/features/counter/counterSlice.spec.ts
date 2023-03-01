@@ -1,4 +1,5 @@
-import counterReducer, {
+import React from 'react'
+/**import counterReducer, {
   CounterState,
   increment,
   decrement,
@@ -32,3 +33,4 @@ describe('counter reducer', () => {
     expect(actual.value).toEqual(5);
   });
 });
+ */
