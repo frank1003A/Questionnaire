@@ -5,6 +5,7 @@ import ButtonComponent from "./Button";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import axios from "axios";
 import { handleCoverImage } from "redux/applicationFormSlice";
+import { BarLoader } from "react-spinners";
 // Import the Cloudinary classes. 
 
 interface Props {
@@ -16,6 +17,7 @@ const UploadImage = ({ onFileInputChange }: Props) => {
   const { coverImage } = useAppSelector((state) => state.applicationForm);
   const [infocus, setInfocus] = useState<boolean>(false);
   const [mount, setMount] = useState<boolean>(false);
+  let [loading, setLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const uploadBox = useRef<HTMLDivElement | null>(null);
   const imageElement = useRef<HTMLImageElement | null>(null);
@@ -51,6 +53,7 @@ const UploadImage = ({ onFileInputChange }: Props) => {
   const onImageFileInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    setLoading(true)
     if (
       event.target.files !== null &&
       event.target.files !== undefined &&
@@ -72,18 +75,21 @@ const UploadImage = ({ onFileInputChange }: Props) => {
     axios
       .post("https://api.cloudinary.com/v1_1/dpmmixyvq/image/upload", data)
       .then((response) => {
+        // handle loading
+        setLoading(false)
+
+        // redux handler cover image 
         dispatch(handleCoverImage({
           url: response.data.url
         }))
       });
   };
 
-  //<img src={coverImage} alt="cover" {...props} />
-
   return (
     <div className="imagebox" style={{ padding: coverImage ? "0" : "1rem" }}>
       <img src={coverImage} alt="cover" {...props} />
-      {coverImage ? (
+      {loading && <BarLoader color="#00635B"/> }
+      {coverImage || loading ? (
         ""
       ) : (
         <div className="uploadimage" onClick={fileUpload} ref={uploadBox}>
@@ -94,7 +100,7 @@ const UploadImage = ({ onFileInputChange }: Props) => {
           <h2>16:9 ratio is recommended. Max image size 1mb</h2>
         </div>
       )}
-      {coverImage ? (
+      {coverImage && 
         <div className="imgcontrols">
           <ButtonComponent
             startIcon={<ClearIcon />}
@@ -102,10 +108,7 @@ const UploadImage = ({ onFileInputChange }: Props) => {
             onClick={fileUpload}
             text="Delete & re-upload"
           />
-        </div>
-      ) : (
-        ""
-      )}
+        </div>}
       <input
         hidden
         ref={inputRef}
